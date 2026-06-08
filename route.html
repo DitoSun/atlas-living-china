@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Route — ATLAS LIVING | Living China</title>
+  <meta name="description" content="Explore the 10-day Living China route: Beijing → Xi'an → Shanghai → Guilin. An epic family journey through China's most captivating cities.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .route-intro {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      background: linear-gradient(135deg, #14213D 0%, #0D1A30 50%, #14213D 100%);
+    }
+    .route-intro h2 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      margin-bottom: 1rem;
+    }
+    .route-overview {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-top: 1px solid rgba(212, 175, 55, 0.15);
+    }
+    .route-overview a {
+      padding: 3rem 2rem;
+      text-align: center;
+      border-right: 1px solid rgba(212, 175, 55, 0.08);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .route-overview a:last-child { border-right: none; }
+    .route-overview a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: #D4AF37;
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+    .route-overview a:hover::before { transform: scaleX(1); }
+    .route-overview a:hover { background: rgba(212, 175, 55, 0.05); }
+    .route-overview .city-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      color: rgba(212, 175, 55, 0.15);
+      margin-bottom: 0.5rem;
+    }
+    .route-overview h3 { font-size: 1.5rem; margin-bottom: 0.3rem; }
+    .route-overview .route-tagline { 
+      font-size: 0.8rem; 
+      color: #D9C7B0; 
+      font-style: italic;
+      font-family: 'Playfair Display', serif;
+    }
+    .route-overview .days {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #D4AF37;
+      margin-top: 0.8rem;
+    }
+    @media (max-width: 768px) {
+      .route-overview { grid-template-columns: 1fr; }
+    }
+
+    /* ===== NEW INTERACTIVE MAP ===== */
+      max-width: 900px;
+      margin: 0 auto 4rem;
+    }
+
+      width: 100%;
+      height: auto;
+    }
+
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+      transition: r 0.3s ease, stroke-width 0.3s ease;
+    }
+
+      r: 24;
+      stroke-width: 3.5;
+    }
+
+      fill: #D4AF37;
+    }
+
+    .city-explorer {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .city-card {
+      display: flex;
+      flex-direction: column;
+      padding: 1.8rem 1.5rem;
+      border: 1px solid rgba(212, 175, 55, 0.1);
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.4s ease;
+      position: relative;
+    }
+
+    .city-card:hover {
+      border-color: rgba(212, 175, 55, 0.3);
+      background: rgba(212, 175, 55, 0.05);
+      transform: translateY(-4px);
+    }
+
+    .city-card-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: rgba(212, 175, 55, 0.15);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .city-card-body h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: #F8F6F1;
+      margin-bottom: 0.2rem;
+    }
+
+    .city-card-tagline {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.8rem;
+      color: #D4AF37;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+
+    .city-card-desc {
+      font-size: 0.78rem;
+      color: #D9C7B0;
+      line-height: 1.6;
+    }
+
+    .city-card-arrow {
+      margin-top: auto;
+      text-align: right;
+      color: #D4AF37;
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+    }
+
+    .city-card:hover .city-card-arrow {
+      transform: translateX(6px);
+    }
+
+    @media (max-width: 900px) {
+      .city-explorer {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .city-explorer {
+        grid-template-columns: 1fr;
+      }
+        max-height: 400px;
+      }
+    }
+
+      stroke-dashoffset: 100;
+    }
+
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+    .route-map-section {
+      padding: 6rem 2.5rem;
+      background: #14213D;
+      position: relative;
+    }
+    .route-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      position: relative;
+    }
+    #chinamap { background: #0D1A30; z-index: 1; position: relative; }
+    .marker-outer {
+      width: 40px; height: 40px;
+      background: rgba(212,175,55,0.1);
+      border: 2px solid rgba(212,175,55,0.6);
+      border-radius: 50%;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(212,175,55,0.15);
+    }
+    .marker-inner {
+      width: 12px; height: 12px;
+      background: #D4AF37;
+      border-radius: 50%;
+    }
+    .map-popup-custom .leaflet-popup-content-wrapper {
+      background: #14213D;
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 6px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      color: #F8F6F1;
+      font-family: 'Montserrat', sans-serif;
+      padding: 0;
+      overflow: hidden;
+    }
+    .map-popup-custom .leaflet-popup-content { margin: 0; padding: 0; }
+    .map-popup-custom .leaflet-popup-tip {
+      background: #14213D;
+      border: 1px solid rgba(212,175,55,0.2);
+    }
+    .map-popup {
+      padding: 1.2rem 1.5rem;
+      min-width: 200px;
+    }
+    .map-popup-label {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: #D4AF37;
+      margin-bottom: 0.1rem;
+    }
+    .map-popup-tag {
+      display: block;
+      font-size: 0.7rem;
+      color: #D9C7B0;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+    .map-popup-desc {
+      font-size: 0.75rem;
+      color: #f8f6f1cc;
+      line-height: 1.5;
+      margin-bottom: 0.8rem;
+    }
+    .map-popup-link {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #D4AF37;
+      border-bottom: 1px solid #D4AF37;
+      padding-bottom: 2px;
+      transition: all 0.3s;
+    }
+    .map-popup-link:hover { color: #F8F6F1; border-color: #F8F6F1; }
+    .map-tooltip { background: #14213D !important; border: 1px solid rgba(212,175,55,0.3) !important; color: #F8F6F1 !important; font-family: 'Montserrat', sans-serif !important; font-size: 0.75rem !important; box-shadow: none !important; }
+    .map-tooltip::before { border-top-color: rgba(212,175,55,0.3) !important; }
+    .leaflet-container { font-family: 'Montserrat', sans-serif !important; }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="index.html" class="logo">
+      <img src="%E6%97%85%E8%A1%8C%E5%9B%BE%E7%89%87/LOGO_white.png" alt="ATLAS LIVING" class="logo-img">
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="why-china.html">Why China</a>
+      <a href="why-this-journey.html">The Journey</a>
+      <div class="nav-dropdown">
+      <a href="route.html">The Route</a>
+      <div class="nav-dropdown-menu">
+        <a href="beijing.html">Beijing</a>
+        <a href="xian.html">Xi'an</a>
+        <a href="shanghai.html">Shanghai</a>
+        <a href="guilin.html">Guilin</a>
+      </div>
+    </div>
+      <a href="experiences.html">Experiences</a>
+      <a href="itinerary.html">Itinerary</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </header>
+
+  <div class="mobile-menu">
+    <a href="index.html">Home</a>
+    <a href="why-china.html">Why China</a>
+    <a href="why-this-journey.html">The Journey</a>
+    <a href="route.html">The Route</a>
+    <a href="beijing.html">Beijing</a>
+    <a href="xian.html">Xi'an</a>
+    <a href="shanghai.html">Shanghai</a>
+    <a href="guilin.html">Guilin</a>
+    <a href="experiences.html">Experiences</a>
+    <a href="accommodation.html">Accommodation</a>
+    <a href="itinerary.html">Itinerary</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <!-- Route Hero -->
+  <section class="page-hero">
+    <img src="%E6%97%85%E8%A1%8C%E5%9B%BE%E7%89%87/%E7%A9%BF%E8%B6%8A%E4%B8%AD%E5%9B%BD%E7%9A%84%E5%8F%B2%E8%AF%97%E4%B9%8B%E6%97%85.jpg" alt="China route" class="hero-image">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="section-label">The Route</span>
+      <h1 style="font-size: clamp(1.8rem, 3vw, 3rem); white-space: nowrap;">An Epic Journey Across <span class="gold-text">China</span></h1>
+      <p class="subtitle">From the imperial heart to the mystical landscapes — four cities, one unforgettable family story</p>
+    </div>
+  </section>
+
+  <!-- Interactive Map Section -->
+  <section class="route-map-section">
+    <div class="route-container" style="max-width: 1200px;">
+      <div class="section-header fade-in">
+        <span class="section-label">Interactive Map</span>
+        <h2>Follow the <span class="gold-text">Journey</span></h2>
+      </div>
+      
+      <div id="chinamap" style="width: 100%; height: 350px; border: 1px solid rgba(212,175,55,0.15); border-radius: 4px;"></div>
+      
+      <div class="city-explorer stagger-children" style="margin-top: 3rem;">
+        <a href="beijing.html" class="city-card" data-city="beijing">
+          <div class="city-card-num">01</div>
+          <div class="city-card-body">
+            <h4>Beijing</h4>
+            <p class="city-card-tagline">Where China Remembers</p>
+            <p class="city-card-desc">Walk through 500 years of imperial history, from the Forbidden City to hidden hutong alleyways.</p>
+          </div>
+          <div class="city-card-arrow">→</div>
+        </a>
+        <a href="xian.html" class="city-card" data-city="xian">
+          <div class="city-card-num">02</div>
+          <div class="city-card-body">
+            <h4>Xi'an</h4>
+            <p class="city-card-tagline">Where China Began</p>
+            <p class="city-card-desc">Stand before the Terracotta Warriors and walk the ancient walls of the Silk Road's greatest city.</p>
+          </div>
+          <div class="city-card-arrow">→</div>
+        </a>
+        <a href="shanghai.html" class="city-card" data-city="shanghai">
+          <div class="city-card-num">03</div>
+          <div class="city-card-body">
+            <h4>Shanghai</h4>
+            <p class="city-card-tagline">Where China Evolves</p>
+            <p class="city-card-desc">Experience China's future in a dazzling metropolis where tradition meets innovation.</p>
+          </div>
+          <div class="city-card-arrow">→</div>
+        </a>
+        <a href="guilin.html" class="city-card" data-city="guilin">
+          <div class="city-card-num">04</div>
+          <div class="city-card-body">
+            <h4>Guilin</h4>
+            <p class="city-card-tagline">Where China Inspires</p>
+            <p class="city-card-desc">Float through mist-shrouded karst landscapes that have inspired poets for centuries.</p>
+          </div>
+          <div class="city-card-arrow">→</div>
+        </a>
+      </div>
+    </div>
+  </section><section class="route-intro">
+    <div class="fade-in" style="max-width: 800px;">
+      <span class="section-label">The Narrative</span>
+      <h2>A Family Story Across <span class="gold-text">Time</span></h2>
+      <p style="color: #D9C7B0; font-size: 1.05rem; line-height: 2; max-width: 650px; margin: 0 auto;">
+        Every journey tells a story. Yours begins in the imperial grandeur of Beijing, where China remembers its glorious past. 
+        Travel back to the dawn of civilisation in Xi'an, where the First Emperor's army stands eternal guard. 
+        Leap into the future in Shanghai, where tradition and innovation dance in neon light. 
+        And find peace among the mist-shrouded peaks of Guilin, where nature itself becomes art.
+      </p>
+    </div>
+  </section>
+
+  <!-- Route Overview Grid -->
+  <div class="route-overview">
+    <a href="beijing.html" class="fade-in">
+      <div class="city-num">01</div>
+      <h3>Beijing</h3>
+      <p class="route-tagline">Where China Remembers</p>
+      <p style="font-size: 0.8rem; color: #D9C7B0; margin-top: 1rem; line-height: 1.7;">Walk through 500 years of imperial history, explore hidden hutongs, and stand where emperors once ruled.</p>
+      <div class="days">Days 1–3</div>
+    </a>
+    <a href="xian.html" class="fade-in">
+      <div class="city-num">02</div>
+      <h3>Xi'an</h3>
+      <p class="route-tagline">Where China Began</p>
+      <p style="font-size: 0.8rem; color: #D9C7B0; margin-top: 1rem; line-height: 1.7;">Come face to face with the Terracotta Warriors and walk the ancient walls of the Silk Road's greatest city.</p>
+      <div class="days">Days 4–5</div>
+    </a>
+    <a href="shanghai.html" class="fade-in">
+      <div class="city-num">03</div>
+      <h3>Shanghai</h3>
+      <p class="route-tagline">Where China Evolves</p>
+      <p style="font-size: 0.8rem; color: #D9C7B0; margin-top: 1rem; line-height: 1.7;">Experience China's future in a city of dazzling contrasts — art deco meets cyberpunk, tradition meets innovation.</p>
+      <div class="days">Days 6–7</div>
+    </a>
+    <a href="guilin.html" class="fade-in">
+      <div class="city-num">04</div>
+      <h3>Guilin</h3>
+      <p class="route-tagline">Where China Inspires</p>
+      <p style="font-size: 0.8rem; color: #D9C7B0; margin-top: 1rem; line-height: 1.7;">Float through mist-shrouded karst landscapes that have inspired poets, painters, and dreamers for centuries.</p>
+      <div class="days">Days 8–10</div>
+    </a>
+  </div>
+
+  <!-- CTA -->
+  <section class="section section-dark" style="text-align: center;">
+    <div class="container">
+      <h2 style="margin-bottom: 1rem;">Explore Each City <span class="gold-text">In Depth</span></h2>
+      <p style="color: #D9C7B0; margin-bottom: 2rem;">Click on any city above to discover its stories, experiences, and hidden treasures.</p>
+      <a href="beijing.html" class="hero-cta">Begin in Beijing →</a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">ATLAS <span>LIVING</span></a>
+        <p>Crafting transformative family journeys through the world's most captivating cultures.</p>
+      </div>
+      <div class="footer-col">
+        <h4>The Journey</h4>
+        <a href="why-china.html">Why China</a>
+        <a href="route.html">The Route</a>
+        <a href="itinerary.html">10-Day Itinerary</a>
+        <a href="experiences.html">Signature Experiences</a>
+      </div>
+      <div class="footer-col">
+        <h4>Destinations</h4>
+        <a href="beijing.html">Beijing</a>
+        <a href="xian.html">Xi'an</a>
+        <a href="shanghai.html">Shanghai</a>
+        <a href="guilin.html">Guilin</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="contact.html">Contact Us</a>
+        <a href="accommodation.html">Accommodation</a>
+        <a href="contact.html">FAQ</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Atlas Living. All rights reserved.</span>
+      <span>Designed for families seeking the extraordinary</span>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var map = L.map('chinamap', {
+      center: [34.0, 108.0],
+      zoom: 5,
+      zoomControl: false,
+      attributionControl: false
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 18
+    }).addTo(map);
+
+    var cities = [
+      { name: 'Beijing', lat: 39.9042, lng: 116.4074, tag: 'Where China Remembers', desc: 'Walk through 500 years of imperial history, from the Forbidden City to hidden hutong alleyways.', page: 'beijing.html' },
+      { name: "Xi'an", lat: 34.3416, lng: 108.9398, tag: 'Where China Began', desc: 'Stand before the Terracotta Warriors and walk the ancient walls of the Silk Road\'s greatest city.', page: 'xian.html' },
+      { name: 'Shanghai', lat: 31.2304, lng: 121.4737, tag: 'Where China Evolves', desc: 'Experience China\'s future in a dazzling metropolis where tradition meets innovation.', page: 'shanghai.html' },
+      { name: 'Guilin', lat: 25.2736, lng: 110.2900, tag: 'Where China Inspires', desc: 'Float through mist-shrouded karst landscapes that have inspired poets for centuries.', page: 'guilin.html' }
+    ];
+
+    var markerIcon = L.divIcon({
+      className: 'marker-gold',
+      html: '<div class="marker-outer"><div class="marker-inner"></div></div>',
+      iconSize: [40, 40],
+      iconAnchor: [20, 20]
+    });
+
+    var markers = [];
+    cities.forEach(function(c) {
+      var marker = L.marker([c.lat, c.lng], { icon: markerIcon }).addTo(map);
+      
+      var popupContent = '<div class="map-popup"><span class="map-popup-label">' + c.name + '</span><span class="map-popup-tag">' + c.tag + '</span><p class="map-popup-desc">' + c.desc + '</p><a href="' + c.page + '" class="map-popup-link">Explore →</a></div>';
+      marker.bindPopup(popupContent, {
+        className: 'map-popup-custom',
+        closeButton: false,
+        offset: [0, -20]
+      });
+      
+      markers.push(marker);
+    });
+
+    var routeCoords = [
+      [39.9042, 116.4074],
+      [34.3416, 108.9398],
+      [31.2304, 121.4737],
+      [25.2736, 110.2900]
+    ];
+
+    var routeLine = L.polyline(routeCoords, {
+      color: '#D4AF37',
+      weight: 2.5,
+      opacity: 0.7,
+      dashArray: '12, 10'
+    }).addTo(map);
+
+    var routeBounds = routeLine.getBounds().pad(0.5);
+    map.fitBounds(routeBounds);
+
+    // City cards hover sync
+    document.querySelectorAll('.city-card').forEach(function(card) {
+      card.addEventListener('mouseenter', function() {
+        var idx = Array.from(card.parentNode.children).indexOf(card);
+        if (markers[idx]) {
+          markers[idx].openPopup();
+        }
+      });
+      card.addEventListener('mouseleave', function() {
+        markers.forEach(function(m) { m.closePopup(); });
+      });
+    });
+  });
+  </script>
+  <script src="js/script.js"></script>
+</body>
+</html>

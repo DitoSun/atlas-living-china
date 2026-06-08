@@ -1,0 +1,20 @@
+# Reasonix config
+.reasonix/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Video originals (unused)
+旅行图片/china_lanterns.mp4
+旅行图片/china_shanghai_night.mp4
+旅行图片/china_cinematic1.jpg
+旅行图片/china_cinematic2.jpg
+旅行图片/cultural_family.jpg
+旅行图片/lanterns.jpg
+旅行图片/chinese_scene.jpg
+
+# Logo source files
+旅行图片/LOGO.jpg
+旅行图片/LOGO_cropped.png
+旅行图片/LOGO_navy.png

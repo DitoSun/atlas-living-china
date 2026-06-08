@@ -1,0 +1,74 @@
+# Reasonix configuration.
+# Resolution order: flag > ./reasonix.toml > ~/.config/reasonix/config.toml > built-in defaults.
+# Secrets come from the environment via api_key_env; never put keys here.
+
+config_version = 2   # schema marker for diagnostics; old versions may ignore it
+default_model = "deepseek-flash"
+# language      = "zh"   # ui/model language; empty = auto-detect from $LANG / $REASONIX_LANG
+
+[agent]
+# system_prompt = """..."""   # omit to use the built-in prompt for this version
+# system_prompt_file = "prompts/system.md"   # overrides system_prompt when set
+max_steps   = 0
+temperature = 0.0
+auto_plan   = "off"   # off|on; off keeps plan mode manual
+# auto_plan_classifier = "deepseek-flash"   # optional; only used for borderline tasks
+soft_compact_ratio  = 0.5   # notice only; keeps cache-first prefix intact
+compact_ratio       = 0.8   # try compacting when prompt reaches this fraction
+compact_force_ratio = 0.9   # force compacting at this high-water mark
+# planner_model = "mimo"   # optional: enable two-model collaboration
+# subagent_model = "deepseek-pro"   # optional default for runAs=subagent skills
+# subagent_models = { review = "deepseek-pro", security_review = "deepseek-pro" }   # per-skill overrides
+# subagent_effort = "high"   # optional default effort for subagents
+# subagent_efforts = { review = "max", task = "high" }   # per-tool/skill effort overrides
+# output_style = "explanatory"   # explanatory | learning | concise | custom; empty = default
+
+[tools]
+enabled = []   # empty = all built-in tools
+bash_timeout_seconds = 120   # foreground safety cap; set 0 for no tool-local cap
+
+[codegraph]
+enabled      = true   # built-in MCP server; off by default for first-run sessions
+auto_install = true   # fetch the runtime when CodeGraph is enabled but missing
+# path       = ""   # empty = cache, then PATH, then a bundle beside reasonix
+
+[skills]
+# paths = ["~/my-skills", "../shared/skills"]   # extra custom skill roots
+# excluded_paths = ["~/.agents/skills"]   # hide convention roots without deleting folders
+# max_depth = 3   # nested scan depth; set 1 for legacy root-only discovery
+# disabled_skills = ["review"]   # hide noisy or unwanted skills
+
+[permissions]
+# Per-call gating. mode = writer fallback when no rule matches: ask|allow|deny.
+# Readers always default to allow. Precedence: deny > ask > allow > fallback.
+# Rules are "ToolName" or "ToolName(glob)"; '*' matches any run, '?' one char.
+mode  = "ask"
+# deny = ["bash(rm -rf*)", "bash(git push*)"]   # hard-blocked in every mode
+allow = ["bash=dir \"C:\\Users\\Administrator\\Desktop\\旅游网站\\旅行图片\" /b", "bash=mkdir -p \"C:/Users/Administrator/Desktop/旅游网站/css\" \"C:/Users/Administrator/Desktop/旅游网站/js\"", "write_file=C:/Users/Administrator/Desktop/旅游网站/css/style.css", "write_file=C:/Users/Administrator/Desktop/旅游网站/js/script.js", "write_file=C:/Users/Administrator/Desktop/旅游网站/index.html", "write_file=C:/Users/Administrator/Desktop/旅游网站/why-china.html", "write_file=C:/Users/Administrator/Desktop/旅游网站/why-this-journey.html", "write_file=C:/Users/Administrator/Desktop/旅游网站/route.html", "write_file=C:/Users/Administrator/Desktop/旅游网站/beijing.html", "write_file=C:/Users/Administrator/Desktop/旅游网站/xian.html", "write_file=C:/Users/Administrator/Desktop/旅游网站/shanghai.html", "write_file=C:/Users/Administrator/Desktop/旅游网站/guilin.html", "write_file=C:/Users/Administrator/Desktop/旅游网站/experiences.html", "write_file=C:/Users/Administrator/Desktop/旅游网站/accommodation.html", "write_file=C:/Users/Administrator/Desktop/旅游网站/itinerary.html", "write_file=C:/Users/Administrator/Desktop/旅游网站/contact.html", "bash=ls -la \"C:/Users/Administrator/Desktop/旅游网站/\" && echo \"---\" && ls -la \"C:/Users/Administrator/Desktop/旅游网站/css/\" && echo \"---\" && ls -la \"C:/Users/Administrator/Desktop/旅游网站/js/\" && echo \"---\" && echo \"=== File sizes ===\" && wc -c \"C:/Users/Administrator/Desktop/旅游网站/index.html\" \"C:/Users/Administrator/Desktop/旅游网站/why-china.html\" \"C:/Users/Administrator/Desktop/旅游网站/why-this-journey.html\" \"C:/Users/Administrator/Desktop/旅游网站/route.html\" \"C:/Users/Administrator/Desktop/旅游网站/beijing.html\" \"C:/Users/Administrator/Desktop/旅游网站/xian.html\" \"C:/Users/Administrator/Desktop/旅游网站/shanghai.html\" \"C:/Users/Administrator/Desktop/旅游网站/guilin.html\" \"C:/Users/Administrator/Desktop/旅游网站/experiences.html\" \"C:/Users/Administrator/Desktop/旅游网站/accommodation.html\" \"C:/Users/Administrator/Desktop/旅游网站/itinerary.html\" \"C:/Users/Administrator/Desktop/旅游网站/contact.html\" \"C:/Users/Administrator/Desktop/旅游网站/css/style.css\" \"C:/Users/Administrator/Desktop/旅游网站/js/script.js\"", "bash=echo \"=== 图片文件检查 ===\" && for f in \"北京1.jpg\" \"北京2.jpg\" \"北京3.jpg\" \"上海1.jpg\" \"上海2.jpg\" \"上海3.jpg\" \"西安1.png\" \"西安2.jpg\" \"西安3.jpg\" \"桂林1.jpg\" \"桂林2.jpg\" \"桂林3.jpg\"; do\n  if [ -f \"C:/Users/Administrator/Desktop/旅游网站/旅行图片/$f\" ]; then\n    echo \"✓ $f\"\n  else\n    echo \"✗ MISSING: $f\"\n  fi\ndone", "bash=cd \"C:/Users/Administrator/Desktop/旅游网站\" && python -c \"\nimport os\n\n# Check nav links consistency\nhtml_files = [f for f in os.listdir('.') if f.endswith('.html')]\nprint('=== HTML Pages:', len(html_files), '===')\nfor f in sorted(html_files):\n    size = os.path.getsize(f)\n    print(f'{size:>8} bytes  {f}')\n\nprint()\nprint('=== Image path check (sample from index.html) ===')\nwith open('index.html', 'r', encoding='utf-8') as f:\n    content = f.read()\n    \n# Count image references\nimport re\nimgs = re.findall(r'src=\\\"([^\\\"]+)\\\"', content)\nfor img in imgs:\n    print(f'  {img}')\n\"", "bash=wc -c \"C:/Users/Administrator/Desktop/旅游网站\"/*.html | tail -1 && echo \"---\" && ls \"C:/Users/Administrator/Desktop/旅游网站\"/*.html | wc -l && echo \"HTML files\" && ls \"C:/Users/Administrator/Desktop/旅游网站/css/\"*.css \"C:/Users/Administrator/Desktop/旅游网站/js/\"*.js", "bash=cd \"C:/Users/Administrator/Desktop/旅游网站\" && wc -c *.html | tail -1 && ls *.html | wc -l && echo \"HTML files\""]
+# ask = ["write_file"]   # force a prompt even if otherwise allowed
+
+[sandbox]
+# Confine tool blast radius. File-writers (write_file/edit_file/multi_edit)
+# may only write under workspace_root (empty = current dir) + allow_write.
+# bash = "enforce" (default) jails each command in an OS sandbox (macOS now;
+# graceful fallback elsewhere); "off" disables it. network allows egress.
+# workspace_root = ""            # default: current working directory
+# allow_write = ["/tmp"]          # extra dirs writers may also modify
+bash    = "enforce"
+network = true
+
+[statusline]
+# A custom status line: a command whose first stdout line replaces the built-in
+# data row. It receives {"model","contextUsed","contextWindow","cwd"} as JSON on stdin.
+# command = "my-statusline.sh"
+
+# External MCP servers. type: "stdio" (default, a subprocess) | "http" | "sse".
+# ${VAR} / ${VAR:-default} are expanded from the environment in command/args/env/url/headers.
+# [[plugins]]
+# name    = "example"
+# command = "reasonix-plugin-example"
+# [[plugins]]                                  # a remote server over Streamable HTTP
+# name    = "stripe"
+# type    = "http"
+# url     = "https://mcp.stripe.com"
+# headers = { Authorization = "Bearer ${STRIPE_KEY}" }
