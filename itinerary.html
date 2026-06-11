@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=2">
   <style>
     .itinerary-header {
       text-align: center;
@@ -106,7 +106,7 @@
   </div>
 
   <section class="page-hero">
-    <img src="images/four.jpg" alt="Journey" class="hero-image">
+    <img src="images/four.jpg" alt="Journey" class="hero-image" loading="lazy">
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <span class="section-label">Itinerary</span>
@@ -146,115 +146,144 @@
     <div class="container">
       <div class="timeline">
 
-        <!-- Day 1 -->
+        <!-- Day 1 · Arrival -->
         <div class="timeline-item fade-in">
           <div class="timeline-marker"></div>
-          <div class="day-tag">Day 1 · Arrival</div>
-          <span class="city-tag">Beijing</span>
-          <h3>Welcome to the Middle Kingdom</h3>
-          <p>Your family arrives in Beijing and is met by your Atlas Living guide. A private transfer takes you to The Peninsula 
-          Beijing, where you'll settle into your suites. This evening, enjoy a welcome dinner overlooking the Forbidden City 
-          — an introduction to imperial Chinese cuisine and a preview of the journey ahead.</p>
+          <div class="timeline-day">
+            <div class="timeline-day-content">
+              <div class="day-tag">Day 1 · Arrival · <span class="city-tag">Beijing</span></div>
+
+              <h3>Welcome to the Middle Kingdom</h3>
+              <p>Your family arrives in Beijing and is met by your Atlas Living guide. A private transfer takes you to The Peninsula Beijing, where you'll settle into your suites. This evening, enjoy a welcome dinner overlooking the Forbidden City — an introduction to imperial Chinese cuisine and a preview of the journey ahead.</p>
+            </div>
+            <img src="images/1.jpg" alt="Day 1" class="timeline-day-image reveal" loading="lazy">
+          </div>
         </div>
 
-        <!-- Day 2 -->
+        <!-- Day 2 · Imperial Beijing -->
         <div class="timeline-item fade-in">
           <div class="timeline-marker"></div>
-          <div class="day-tag">Day 2 · Imperial Beijing</div>
-          <span class="city-tag">Beijing</span>
-          <h3>The Forbidden City & Temple of Heaven</h3>
-          <p>A full day exploring Beijing's imperial heart. Your private guide leads your family through the Forbidden City's 
-          vast courtyards and halls, sharing stories of emperors and eunuchs, concubines and courtiers. After lunch, visit 
-          the Temple of Heaven, where you'll watch Beijing's elders practise tai chi. Evening: your first Peking duck experience.</p>
+          <div class="timeline-day">
+            <div class="timeline-day-content">
+              <div class="day-tag">Day 2 · Imperial Beijing · <span class="city-tag">Beijing</span></div>
+
+              <h3>The Forbidden City & Temple of Heaven</h3>
+              <p>A full day exploring Beijing's imperial heart. Your private guide leads your family through the Forbidden City's vast courtyards and halls, sharing stories of emperors and eunuchs, concubines and courtiers. After lunch, visit the Temple of Heaven, where you'll watch Beijing's elders practise tai chi. Evening: your first Peking duck experience.</p>
+            </div>
+            <img src="images/2.jpg" alt="Day 2" class="timeline-day-image reveal" loading="lazy">
+          </div>
         </div>
 
-        <!-- Day 3 -->
+        <!-- Day 3 · Hutong Life -->
         <div class="timeline-item fade-in">
           <div class="timeline-marker"></div>
-          <div class="day-tag">Day 3 · Hutong Life</div>
-          <span class="city-tag">Beijing</span>
-          <h3>Living Beijing's Traditions</h3>
-          <p>Morning: explore the hutong alleys by rickshaw and visit a local family in their courtyard home. Midday: a hands-on 
-          dumpling workshop where your family learns to fold jiaozi with a Beijing grandmother. Afternoon: calligraphy 
-          workshop with a master. Evening: at leisure to explore Wangfujing night market.</p>
+          <div class="timeline-day">
+            <div class="timeline-day-content">
+              <div class="day-tag">Day 3 · Hutong Life · <span class="city-tag">Beijing</span></div>
+
+              <h3>Living Beijing's Traditions</h3>
+              <p>Morning: explore the hutong alleys by rickshaw and visit a local family in their courtyard home. Midday: a hands-on dumpling workshop where your family learns to fold jiaozi with a Beijing grandmother. Afternoon: calligraphy workshop with a master. Evening: at leisure to explore Wangfujing night market.</p>
+            </div>
+            <img src="images/3.jpg" alt="Day 3" class="timeline-day-image reveal" loading="lazy">
+          </div>
         </div>
 
-        <!-- Day 4 -->
+        <!-- Day 4 · High-Speed to Xi'an -->
         <div class="timeline-item fade-in">
           <div class="timeline-marker"></div>
-          <div class="day-tag">Day 4 · High-Speed to Xi'an</div>
-          <span class="city-tag">Xi'an</span>
-          <h3>The Ancient Capital Awaits</h3>
-          <p>Board China's legendary high-speed train for the journey to Xi'an — a comfortable 4-hour ride through the 
-          countryside. After checking into The Westin Xi'an, explore the Muslim Quarter's bustling food alleys. 
-          Evening: the Tang Dynasty dinner show — a spectacular performance of China's golden age.</p>
+          <div class="timeline-day">
+            <div class="timeline-day-content">
+              <div class="day-tag">Day 4 · High-Speed to Xi'an · <span class="city-tag">Xi'an</span></div>
+
+              <h3>The Ancient Capital Awaits</h3>
+              <p>Board China's legendary high-speed train for the journey to Xi'an — a comfortable 4-hour ride through the countryside. After checking into The Westin Xi'an, explore the Muslim Quarter's bustling food alleys. Evening: the Tang Dynasty dinner show — a spectacular performance of China's golden age.</p>
+            </div>
+            <img src="images/4.jpg" alt="Day 4" class="timeline-day-image reveal" loading="lazy">
+          </div>
         </div>
 
-        <!-- Day 5 -->
+        <!-- Day 5 · Warriors & Walls -->
         <div class="timeline-item fade-in">
           <div class="timeline-marker"></div>
-          <div class="day-tag">Day 5 · Warriors & Walls</div>
-          <span class="city-tag">Xi'an</span>
-          <h3>Face to Face with History</h3>
-          <p>Morning: visit the Terracotta Warriors — your family will stand before thousands of life-sized soldiers, each 
-          with a unique face. Afternoon: bicycle along the ancient City Wall at sunset. Evening: the Night Food Discovery 
-          Walk through the Muslim Quarter, tasting Xi'an's legendary Silk Road cuisine.</p>
+          <div class="timeline-day">
+            <div class="timeline-day-content">
+              <div class="day-tag">Day 5 · Warriors & Walls · <span class="city-tag">Xi'an</span></div>
+
+              <h3>Face to Face with History</h3>
+              <p>Morning: visit the Terracotta Warriors — your family will stand before thousands of life-sized soldiers, each with a unique face. Afternoon: bicycle along the ancient City Wall at sunset. Evening: the Night Food Discovery Walk through the Muslim Quarter, tasting Xi'an's legendary Silk Road cuisine.</p>
+            </div>
+            <img src="images/5.jpg" alt="Day 5" class="timeline-day-image reveal" loading="lazy">
+          </div>
         </div>
 
-        <!-- Day 6 -->
+        <!-- Day 6 · Flight to Shanghai -->
         <div class="timeline-item fade-in">
           <div class="timeline-marker"></div>
-          <div class="day-tag">Day 6 · Flight to Shanghai</div>
-          <span class="city-tag">Shanghai</span>
-          <h3>Yesterday & Tomorrow</h3>
-          <p>Fly to Shanghai and check into The Puli Hotel & Spa in the French Concession. Afternoon: walk the Bund, 
-          where colonial architecture faces Pudong's futuristic skyline — a view that tells China's story in a single 
-          frame. Evening: a Huangpu River night cruise with your family, watching the city light up around you.</p>
+          <div class="timeline-day">
+            <div class="timeline-day-content">
+              <div class="day-tag">Day 6 · Flight to Shanghai · <span class="city-tag">Shanghai</span></div>
+
+              <h3>Yesterday & Tomorrow</h3>
+              <p>Fly to Shanghai and check into The Puli Hotel & Spa in the French Concession. Afternoon: walk the Bund, where colonial architecture faces Pudong's futuristic skyline — a view that tells China's story in a single frame. Evening: a Huangpu River night cruise with your family, watching the city light up around you.</p>
+            </div>
+            <img src="images/6.jpg" alt="Day 6" class="timeline-day-image reveal" loading="lazy">
+          </div>
         </div>
 
-        <!-- Day 7 -->
+        <!-- Day 7 · Shanghai Contrasts -->
         <div class="timeline-item fade-in">
           <div class="timeline-marker"></div>
-          <div class="day-tag">Day 7 · Shanghai Contrasts</div>
-          <span class="city-tag">Shanghai</span>
-          <h3>Art, Tea & Modern China</h3>
-          <p>Morning: explore the French Concession with a local artist, visiting contemporary galleries and hidden gems. 
-          Afternoon: a private tea ceremony in a hidden tea house — your family learns the art of gongfu tea. Evening: 
-          a culinary journey through Shanghai's diverse food scene, from xiaolongbao to late-night noodle stalls.</p>
+          <div class="timeline-day">
+            <div class="timeline-day-content">
+              <div class="day-tag">Day 7 · Shanghai Contrasts · <span class="city-tag">Shanghai</span></div>
+
+              <h3>Art, Tea & Modern China</h3>
+              <p>Morning: explore the French Concession with a local artist, visiting contemporary galleries and hidden gems. Afternoon: a private tea ceremony in a hidden tea house — your family learns the art of gongfu tea. Evening: a culinary journey through Shanghai's diverse food scene, from xiaolongbao to late-night noodle stalls.</p>
+            </div>
+            <img src="images/7.jpg" alt="Day 7" class="timeline-day-image reveal" loading="lazy">
+          </div>
         </div>
 
-        <!-- Day 8 -->
+        <!-- Day 8 · Flight to Guilin -->
         <div class="timeline-item fade-in">
           <div class="timeline-marker"></div>
-          <div class="day-tag">Day 8 · Flight to Guilin</div>
-          <span class="city-tag">Guilin</span>
-          <h3>Into the Painting</h3>
-          <p>Fly to Guilin and transfer to the Banyan Tree Yangshuo, nestled among the karst mountains. Afternoon: settle 
-          in and explore the resort's stunning grounds. Evening: a welcome dinner featuring the fresh, vibrant flavours 
-          of Guangxi cuisine, with the limestone peaks silhouetted against the sunset.</p>
+          <div class="timeline-day">
+            <div class="timeline-day-content">
+              <div class="day-tag">Day 8 · Flight to Guilin · <span class="city-tag">Guilin</span></div>
+
+              <h3>Into the Painting</h3>
+              <p>Fly to Guilin and transfer to the Banyan Tree Yangshuo, nestled among the karst mountains. Afternoon: settle in and explore the resort's stunning grounds. Evening: a welcome dinner featuring the fresh, vibrant flavours of Guangxi cuisine, with the limestone peaks silhouetted against the sunset.</p>
+            </div>
+            <img src="images/8.jpg" alt="Day 8" class="timeline-day-image reveal" loading="lazy">
+          </div>
         </div>
 
-        <!-- Day 9 -->
+        <!-- Day 9 · The Li River -->
         <div class="timeline-item fade-in">
           <div class="timeline-marker"></div>
-          <div class="day-tag">Day 9 · The Li River</div>
-          <span class="city-tag">Guilin</span>
-          <h3>Floating Through a Dream</h3>
-          <p>The crown jewel of your journey: a private Li River cruise through mist-shrouded karst landscapes. Your family 
-          will drift through scenes that have inspired Chinese painters for a thousand years. Afternoon: cycle through 
-          Yangshuo's rice paddies and visit a minority village. Evening: the Impression Liu Sanjie show — a breathtaking 
-          outdoor performance on the river itself.</p>
+          <div class="timeline-day">
+            <div class="timeline-day-content">
+              <div class="day-tag">Day 9 · The Li River · <span class="city-tag">Guilin</span></div>
+
+              <h3>Floating Through a Dream</h3>
+              <p>The crown jewel of your journey: a private Li River cruise through mist-shrouded karst landscapes. Your family will drift through scenes that have inspired Chinese painters for a thousand years. Afternoon: cycle through Yangshuo's rice paddies and visit a minority village. Evening: the Impression Liu Sanjie show — a breathtaking outdoor performance on the river itself.</p>
+            </div>
+            <img src="images/9.jpg" alt="Day 9" class="timeline-day-image reveal" loading="lazy">
+          </div>
         </div>
 
-        <!-- Day 10 -->
+        <!-- Day 10 · Farewell -->
         <div class="timeline-item fade-in">
           <div class="timeline-marker"></div>
-          <div class="day-tag">Day 10 · Farewell</div>
-          <span class="city-tag">Guilin</span>
-          <h3>Until We Meet Again</h3>
-          <p>A final morning at leisure — perhaps a bamboo raft ride on the Yulong River or last-minute souvenir shopping. 
-          Your Atlas Living guide accompanies your family to the airport for your departure, carrying with you the memories 
-          of a journey that has transformed how you see China — and each other.</p>
+          <div class="timeline-day">
+            <div class="timeline-day-content">
+              <div class="day-tag">Day 10 · Farewell · <span class="city-tag">Guilin</span></div>
+
+              <h3>Until We Meet Again</h3>
+              <p>A final morning at leisure — perhaps a bamboo raft ride on the Yulong River or last-minute souvenir shopping. Your Atlas Living guide accompanies your family to the airport for your departure, carrying with you the memories of a journey that has transformed how you see China — and each other.</p>
+            </div>
+            <img src="images/10.jpg" alt="Day 10" class="timeline-day-image reveal" loading="lazy">
+          </div>
         </div>
 
       </div>
@@ -303,6 +332,6 @@
     </div>
   </footer>
 
-  <script src="js/script.js"></script>
+  <script src="js/script.js?v=2"></script>
 </body>
 </html>

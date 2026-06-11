@@ -364,7 +364,7 @@ h4 { font-size: clamp(1.1rem, 1.8vw, 1.6rem); letter-spacing: 0.03em; }
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   z-index: 0;
 }
@@ -706,6 +706,35 @@ h4 { font-size: clamp(1.1rem, 1.8vw, 1.6rem); letter-spacing: 0.03em; }
   padding-bottom: 0;
 }
 
+.timeline-day {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(212, 175, 55, 0.08);
+  padding: 1.8rem 2rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  align-items: center;
+}
+
+.timeline-day:hover {
+  border-color: rgba(212, 175, 55, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.timeline-day-content {
+  min-width: 0;
+}
+
+.timeline-day-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+}
+
 .timeline-marker {
   position: absolute;
   left: 1.6rem;
@@ -726,6 +755,22 @@ h4 { font-size: clamp(1.1rem, 1.8vw, 1.6rem); letter-spacing: 0.03em; }
   text-transform: uppercase;
   color: #D4AF37;
   margin-bottom: 0.3rem;
+}
+
+.timeline-item .day-tag .city-tag {
+  display: inline;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  padding: 0;
+  border: none;
+  color: #D9C7B0;
+  margin: 0;
+}
+
+.timeline-item .day-tag .city-tag::before {
+  content: '';
 }
 
 .timeline-item h3 {
@@ -1200,6 +1245,449 @@ h4 { font-size: clamp(1.1rem, 1.8vw, 1.6rem); letter-spacing: 0.03em; }
 }
 
 /* ============================================================
+   🆕 PAGE ENTER ANIMATION
+   ============================================================ */
+.page-enter {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.page-enter.visible {
+  opacity: 1;
+}
+
+/* ============================================================
+   🆕 IMAGE REVEAL ON SCROLL
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   🆕 CARD GLOW ON HOVER
+   ============================================================ */
+.card-glow {
+  position: relative;
+}
+
+.card-glow::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, transparent 40%, rgba(212, 175, 55, 0.3) 50%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: -1;
+  filter: blur(8px);
+}
+
+.card-glow:hover::after {
+  opacity: 1;
+}
+
+/* ============================================================
+   🆕 COUNTER NUMBER STYLING
+   ============================================================ */
+.counter-num {
+  display: inline-block;
+}
+
+/* ============================================================
+   🆕 PARALLAX SUBTLE ON INNER PAGE HERO
+   ============================================================ */
+.page-hero .hero-image.parallax {
+  will-change: transform;
+}
+
+/* ============================================================
+   🆕 REACT-BITS SPOTLIGHT CARD
+   ============================================================ */
+.card-spotlight {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --spotlight-color: rgba(212, 175, 55, 0.5);
+}
+
+.card-spotlight .spotlight-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+  mix-blend-mode: soft-light;
+}
+
+.card-spotlight.active .spotlight-overlay,
+.card-spotlight:hover .spotlight-overlay {
+  opacity: 1;
+}
+
+.card-spotlight > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   🆕 REACT-BITS MAGNET (JS-driven, CSS helpers)
+   ============================================================ */
+.magnet-target {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* ============================================================
+   🆕 REACT-BITS SHINY TEXT
+   ============================================================ */
+.shiny-text {
+  display: inline-block;
+  background: linear-gradient(
+    90deg,
+    #D4AF37 0%,
+    #F8F6F1 30%,
+    #D4AF37 60%,
+    #D4AF37 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% center; }
+  60% { background-position: -50% center; }
+  100% { background-position: -50% center; }
+}
+
+.shiny-text-slow {
+  animation-duration: 5s;
+}
+
+/* ============================================================
+   🆕 REACT-BITS BLUR TEXT (reveal on scroll)
+   ============================================================ */
+.blur-text-word {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease;
+  margin-right: 0.3em;
+  white-space: nowrap;
+}
+
+.blur-text-word.visible {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+/* ============================================================
+   🆕 REACT-BITS BORDER GLOW (simplified)
+   ============================================================ */
+.border-glow-card {
+  position: relative;
+  isolation: isolate;
+  --cursor-angle: 0deg;
+  --edge-proximity: 0;
+  --glow-color-1: #D4AF37;
+  --glow-color-2: #F8F6F1;
+}
+
+.border-glow-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--cursor-angle, 0deg) at 50% 50%,
+    transparent 0deg,
+    var(--glow-color-1) 60deg,
+    var(--glow-color-2) 120deg,
+    transparent 180deg,
+    transparent 360deg
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 0;
+  mask: radial-gradient(
+    80% 80% at 50% 50%,
+    transparent 60%,
+    black 70%
+  );
+  -webkit-mask: radial-gradient(
+    80% 80% at 50% 50%,
+    transparent 60%,
+    black 70%
+  );
+}
+
+.border-glow-card:hover::before,
+.border-glow-card.sweep-active::before {
+  opacity: 0.6;
+}
+
+.border-glow-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   🆕 SCROLL PROGRESS BAR
+   ============================================================ */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, #D4AF37, #F8F6F1);
+  z-index: 9999;
+  transition: width 0.1s ease;
+}
+
+/* ============================================================
+   🆕 FLOATING ACTION BUTTONS
+   ============================================================ */
+.floating-actions {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 998;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  align-items: flex-end;
+  padding: 0.8rem;
+  border-radius: 40px;
+  background: rgba(248, 246, 241, 0.06);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(212, 175, 55, 0.12);
+}
+
+.floating-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid #D4AF37;
+  background: #14213D;
+  color: #F8F6F1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.6),
+    0 0 0 3px rgba(212, 175, 55, 0.12),
+    0 0 15px rgba(212, 175, 55, 0.2);
+  position: relative;
+  text-decoration: none;
+}
+
+.floating-btn:hover {
+  border-color: #F8F6F1;
+  background: #1a2a4a;
+  transform: translateY(-3px);
+  box-shadow:
+    0 6px 25px rgba(0, 0, 0, 0.6),
+    0 0 0 5px rgba(212, 175, 55, 0.2),
+    0 0 25px rgba(212, 175, 55, 0.3);
+}
+
+.floating-btn .tooltip {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 0.4rem 0.8rem;
+  background: rgba(20, 33, 61, 0.95);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  color: #D9C7B0;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.floating-btn:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.floating-btn.back-to-top {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: all 0.4s ease;
+}
+
+.floating-btn.back-to-top.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.floating-btn.back-to-top.show:hover {
+  transform: translateY(-3px);
+}
+
+/* ============================================================
+   🆕 IMAGE LIGHTBOX
+   ============================================================ */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s ease;
+  cursor: zoom-out;
+  padding: 2rem;
+}
+
+.lightbox-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lightbox-overlay img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  transform: scale(0.9);
+  transition: transform 0.4s ease;
+}
+
+.lightbox-overlay.open img {
+  transform: scale(1);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+  color: #F8F6F1;
+  font-size: 2rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.3s;
+  background: none;
+  border: none;
+  font-family: 'Montserrat', sans-serif;
+  line-height: 1;
+}
+
+.lightbox-close:hover {
+  opacity: 1;
+}
+
+.lightbox-caption {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem;
+  color: #D9C7B0;
+  max-width: 80%;
+  text-align: center;
+}
+
+/* Clickable images */
+.clickable-image {
+  cursor: zoom-in;
+  transition: filter 0.3s ease;
+}
+
+.clickable-image:hover {
+  filter: brightness(1.08);
+}
+
+/* ============================================================
+   🆕 ITINERARY DAY TOGGLE
+   ============================================================ */
+.timeline-day.clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.timeline-day.clickable .day-tag::after {
+  content: '▾';
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.6rem;
+  color: #D4AF37;
+  transition: transform 0.3s ease;
+}
+
+.timeline-day.clickable.collapsed .day-tag::after {
+  transform: rotate(-90deg);
+}
+
+.timeline-day .toggle-body {
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+  max-height: 500px;
+  opacity: 1;
+}
+
+.timeline-day.collapsed .toggle-body {
+  max-height: 0 !important;
+  opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .floating-actions {
+    bottom: 1.2rem;
+    right: 1.2rem;
+  }
+  .floating-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+  .floating-btn .tooltip {
+    display: none;
+  }
+  .lightbox-overlay {
+    padding: 1rem;
+  }
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 1024px) {
@@ -1264,6 +1752,18 @@ h4 { font-size: clamp(1.1rem, 1.8vw, 1.6rem); letter-spacing: 0.03em; }
 
   .timeline-item {
     padding-left: 3.5rem;
+  }
+
+  .timeline-day {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .timeline-day-image {
+    width: 100%;
+    height: 200px;
+    order: -1;
   }
 
   .timeline::before {

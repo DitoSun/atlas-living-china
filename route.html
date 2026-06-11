@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=2">
   <style>
     .route-intro {
       min-height: 60vh;
@@ -59,9 +59,9 @@
       margin-bottom: 0.5rem;
     }
     .route-overview h3 { font-size: 1.5rem; margin-bottom: 0.3rem; }
-    .route-overview .route-tagline { 
-      font-size: 0.8rem; 
-      color: #D9C7B0; 
+    .route-overview .route-tagline {
+      font-size: 0.8rem;
+      color: #D9C7B0;
       font-style: italic;
       font-family: 'Playfair Display', serif;
     }
@@ -76,145 +76,138 @@
       .route-overview { grid-template-columns: 1fr; }
     }
 
-    /* ===== NEW INTERACTIVE MAP ===== */
-      max-width: 900px;
-      margin: 0 auto 4rem;
-    }
-
-      width: 100%;
-      height: auto;
-    }
-
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-      transition: r 0.3s ease, stroke-width 0.3s ease;
-    }
-
-      r: 24;
-      stroke-width: 3.5;
-    }
-
-      fill: #D4AF37;
-    }
-
-    .city-explorer {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .city-card {
-      display: flex;
-      flex-direction: column;
-      padding: 1.8rem 1.5rem;
-      border: 1px solid rgba(212, 175, 55, 0.1);
-      background: rgba(255, 255, 255, 0.02);
-      transition: all 0.4s ease;
-      position: relative;
-    }
-
-    .city-card:hover {
-      border-color: rgba(212, 175, 55, 0.3);
-      background: rgba(212, 175, 55, 0.05);
-      transform: translateY(-4px);
-    }
-
-    .city-card-num {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      color: rgba(212, 175, 55, 0.15);
-      line-height: 1;
-      margin-bottom: 0.5rem;
-    }
-
-    .city-card-body h4 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem;
-      color: #F8F6F1;
-      margin-bottom: 0.2rem;
-    }
-
-    .city-card-tagline {
-      font-family: 'Playfair Display', serif;
-      font-size: 0.8rem;
-      color: #D4AF37;
-      font-style: italic;
-      margin-bottom: 0.5rem;
-    }
-
-    .city-card-desc {
-      font-size: 0.78rem;
-      color: #D9C7B0;
-      line-height: 1.6;
-    }
-
-    .city-card-arrow {
-      margin-top: auto;
-      text-align: right;
-      color: #D4AF37;
-      font-size: 1.2rem;
-      transition: transform 0.3s ease;
-    }
-
-    .city-card:hover .city-card-arrow {
-      transform: translateX(6px);
-    }
-
-    @media (max-width: 900px) {
-      .city-explorer {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 600px) {
-      .city-explorer {
-        grid-template-columns: 1fr;
-      }
-        max-height: 400px;
-      }
-    }
-
-      stroke-dashoffset: 100;
-    }
-
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
+    /* ===== 🆕 ENHANCED MAP ===== */
     .route-map-section {
       padding: 6rem 2.5rem;
-      background: #14213D;
+      background: #0D1A30;
       position: relative;
+      overflow: hidden;
+    }
+    .route-map-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(212, 175, 55, 0.04) 0%, transparent 60%);
+      pointer-events: none;
     }
     .route-container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
       position: relative;
     }
-    #chinamap { background: #0D1A30; z-index: 1; position: relative; }
+    .map-wrapper {
+      position: relative;
+      width: 100%;
+      height: 520px;
+      border: 1px solid rgba(212, 175, 55, 0.12);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #0D1A30;
+    }
+    .map-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      background: radial-gradient(
+        ellipse 70% 60% at 53% 50%,
+        transparent 40%,
+        rgba(10, 19, 41, 0.3) 55%,
+        rgba(10, 19, 41, 0.7) 75%,
+        #0A1329 95%
+      );
+    }
+    #chinamap {
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    /* Canvas overlay for flying lines */
+    #flyline-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+    /* Map controls overlay */
+    .map-controls {
+      position: absolute;
+      bottom: 1.2rem;
+      right: 1.2rem;
+      z-index: 10;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .map-btn {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.2rem;
+      background: rgba(20, 33, 61, 0.9);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1.5px solid #D4AF37;
+      color: #F8F6F1;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    }
+    .map-btn:hover {
+      background: rgba(212, 175, 55, 0.25);
+      border-color: #F8F6F1;
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+    }
+    .map-btn.active {
+      background: rgba(212, 175, 55, 0.2);
+      border-color: #F8F6F1;
+    }
+
+    /* City markers - pulsing */
+    .marker-gold { background: transparent !important; border: none !important; }
     .marker-outer {
-      width: 40px; height: 40px;
-      background: rgba(212,175,55,0.1);
-      border: 2px solid rgba(212,175,55,0.6);
+      width: 44px;
+      height: 44px;
+      background: rgba(212, 175, 55, 0.08);
+      border: 2px solid rgba(212, 175, 55, 0.7);
       border-radius: 50%;
       display: flex !important;
       align-items: center;
       justify-content: center;
       transition: all 0.3s ease;
-      box-shadow: 0 0 15px rgba(212,175,55,0.15);
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+      position: relative;
+    }
+    .marker-outer::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(212, 175, 55, 0.15);
+      animation: markerPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes markerPulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.3); opacity: 0; }
     }
     .marker-inner {
-      width: 12px; height: 12px;
+      width: 14px;
+      height: 14px;
       background: #D4AF37;
       border-radius: 50%;
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
     }
+
+    /* Popup styling */
     .map-popup-custom .leaflet-popup-content-wrapper {
       background: #14213D;
-      border: 1px solid rgba(212,175,55,0.2);
+      border: 1px solid rgba(212, 175, 55, 0.2);
       border-radius: 6px;
       box-shadow: 0 8px 30px rgba(0,0,0,0.4);
       color: #F8F6F1;
@@ -225,7 +218,7 @@
     .map-popup-custom .leaflet-popup-content { margin: 0; padding: 0; }
     .map-popup-custom .leaflet-popup-tip {
       background: #14213D;
-      border: 1px solid rgba(212,175,55,0.2);
+      border: 1px solid rgba(212, 175, 55, 0.2);
     }
     .map-popup {
       padding: 1.2rem 1.5rem;
@@ -263,9 +256,79 @@
       transition: all 0.3s;
     }
     .map-popup-link:hover { color: #F8F6F1; border-color: #F8F6F1; }
-    .map-tooltip { background: #14213D !important; border: 1px solid rgba(212,175,55,0.3) !important; color: #F8F6F1 !important; font-family: 'Montserrat', sans-serif !important; font-size: 0.75rem !important; box-shadow: none !important; }
-    .map-tooltip::before { border-top-color: rgba(212,175,55,0.3) !important; }
-    .leaflet-container { font-family: 'Montserrat', sans-serif !important; }
+    .leaflet-container { font-family: 'Montserrat', sans-serif !important; background: #0D1A30; }
+
+    /* City cards */
+    .city-explorer {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .city-card {
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1.8rem;
+      border: 1px solid rgba(212, 175, 55, 0.1);
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.4s ease;
+      position: relative;
+      text-decoration: none;
+    }
+    .city-card:hover {
+      border-color: rgba(212, 175, 55, 0.3);
+      background: rgba(212, 175, 55, 0.05);
+      transform: translateY(-4px);
+    }
+    .city-card.active {
+      border-color: #D4AF37;
+      background: rgba(212, 175, 55, 0.08);
+    }
+    .city-card-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: rgba(212, 175, 55, 0.15);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .city-card-body h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: #F8F6F1;
+      margin-bottom: 0.2rem;
+    }
+    .city-card-tagline {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.8rem;
+      color: #D4AF37;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+    .city-card-desc {
+      font-size: 0.78rem;
+      color: #D9C7B0;
+      line-height: 1.6;
+    }
+    .city-card-arrow {
+      margin-top: auto;
+      text-align: right;
+      color: #D4AF37;
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+    }
+    .city-card:hover .city-card-arrow {
+      transform: translateX(6px);
+    }
+    @media (max-width: 900px) {
+      .city-explorer { grid-template-columns: repeat(2, 1fr); max-width: 100%; }
+      .map-wrapper { height: 380px; }
+    }
+    @media (max-width: 600px) {
+      .city-explorer { grid-template-columns: 1fr; max-width: 100%; }
+      .map-wrapper { height: 280px; }
+      .map-controls { display: none; }
+    }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 </head>
@@ -316,7 +379,7 @@
 
   <!-- Route Hero -->
   <section class="page-hero">
-    <img src="images/%E7%A9%BF%E8%B6%8A%E4%B8%AD%E5%9B%BD%E7%9A%84%E5%8F%B2%E8%AF%97%E4%B9%8B%E6%97%85.jpg" alt="China route" class="hero-image">
+    <img src="images/%E7%A9%BF%E8%B6%8A%E4%B8%AD%E5%9B%BD%E7%9A%84%E5%8F%B2%E8%AF%97%E4%B9%8B%E6%97%85.jpg" alt="China route" class="hero-image" loading="lazy">
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <span class="section-label">The Route</span>
@@ -327,16 +390,23 @@
 
   <!-- Interactive Map Section -->
   <section class="route-map-section">
-    <div class="route-container" style="max-width: 1200px;">
+    <div class="route-container">
       <div class="section-header fade-in">
         <span class="section-label">Interactive Map</span>
         <h2>Follow the <span class="gold-text">Journey</span></h2>
       </div>
-      
-      <div id="chinamap" style="width: 100%; height: 350px; border: 1px solid rgba(212,175,55,0.15); border-radius: 4px;"></div>
-      
+
+      <div class="map-wrapper fade-in">
+        <div id="chinamap"></div>
+        <canvas id="flyline-canvas"></canvas>
+        <div class="map-controls">
+          <button class="map-btn" id="tour-btn">▶ Tour</button>
+          <button class="map-btn" id="reset-btn">⌖ Reset</button>
+        </div>
+      </div>
+
       <div class="city-explorer stagger-children" style="margin-top: 3rem;">
-        <a href="beijing.html" class="city-card" data-city="beijing">
+        <a href="beijing.html" class="city-card" data-city="beijing" data-idx="0">
           <div class="city-card-num">01</div>
           <div class="city-card-body">
             <h4>Beijing</h4>
@@ -345,7 +415,7 @@
           </div>
           <div class="city-card-arrow">→</div>
         </a>
-        <a href="xian.html" class="city-card" data-city="xian">
+        <a href="xian.html" class="city-card" data-city="xian" data-idx="1">
           <div class="city-card-num">02</div>
           <div class="city-card-body">
             <h4>Xi'an</h4>
@@ -354,7 +424,7 @@
           </div>
           <div class="city-card-arrow">→</div>
         </a>
-        <a href="shanghai.html" class="city-card" data-city="shanghai">
+        <a href="shanghai.html" class="city-card" data-city="shanghai" data-idx="2">
           <div class="city-card-num">03</div>
           <div class="city-card-body">
             <h4>Shanghai</h4>
@@ -363,7 +433,7 @@
           </div>
           <div class="city-card-arrow">→</div>
         </a>
-        <a href="guilin.html" class="city-card" data-city="guilin">
+        <a href="guilin.html" class="city-card" data-city="guilin" data-idx="3">
           <div class="city-card-num">04</div>
           <div class="city-card-body">
             <h4>Guilin</h4>
@@ -464,76 +534,306 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
   document.addEventListener('DOMContentLoaded', function() {
+    /* ---- City data ---- */
+    const cities = [
+      { name: 'Beijing', lat: 39.9042, lng: 116.4074, tag: 'Where China Remembers', desc: 'Walk through 500 years of imperial history, from the Forbidden City to hidden hutong alleyways.', page: 'beijing.html', days: 'Days 1–3' },
+      { name: "Xi'an", lat: 34.3416, lng: 108.9398, tag: 'Where China Began', desc: 'Stand before the Terracotta Warriors and walk the ancient walls of the Silk Road\'s greatest city.', page: 'xian.html', days: 'Days 4–5' },
+      { name: 'Shanghai', lat: 31.2304, lng: 121.4737, tag: 'Where China Evolves', desc: 'Experience China\'s future in a dazzling metropolis where tradition meets innovation.', page: 'shanghai.html', days: 'Days 6–7' },
+      { name: 'Guilin', lat: 25.2736, lng: 110.2900, tag: 'Where China Inspires', desc: 'Float through mist-shrouded karst landscapes that have inspired poets for centuries.', page: 'guilin.html', days: 'Days 8–10' }
+    ];
+
+    /* ---- Init Map ---- */
+    // China bounding box
+    var chinaBounds = L.latLngBounds(
+      L.latLng(18.0, 73.0),  // Southwest
+      L.latLng(54.0, 135.0)  // Northeast
+    );
+
     var map = L.map('chinamap', {
-      center: [34.0, 108.0],
+      center: [33.0, 112.0],
       zoom: 5,
       zoomControl: false,
-      attributionControl: false
+      attributionControl: false,
+      dragging: true,
+      scrollWheelZoom: true,
+      maxBounds: chinaBounds,
+      maxBoundsViscosity: 0.8,   // strong boundary resistance
+      inertia: true,
+      inertiaDeceleration: 3000,  // slower deceleration = longer glide
+      inertiaMaxSpeed: 20,        // low max speed for dragging
+      zoomSnap: 0.5,
+      zoomDelta: 0.5,
+      wheelPxPerZoomLevel: 120    // more scroll needed to zoom
     });
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 18
+      maxZoom: 10,
+      minZoom: 4,
+      updateWhenZooming: false,
+      updateWhenIdle: true,
+      keepBuffer: 4
     }).addTo(map);
 
-    var cities = [
-      { name: 'Beijing', lat: 39.9042, lng: 116.4074, tag: 'Where China Remembers', desc: 'Walk through 500 years of imperial history, from the Forbidden City to hidden hutong alleyways.', page: 'beijing.html' },
-      { name: "Xi'an", lat: 34.3416, lng: 108.9398, tag: 'Where China Began', desc: 'Stand before the Terracotta Warriors and walk the ancient walls of the Silk Road\'s greatest city.', page: 'xian.html' },
-      { name: 'Shanghai', lat: 31.2304, lng: 121.4737, tag: 'Where China Evolves', desc: 'Experience China\'s future in a dazzling metropolis where tradition meets innovation.', page: 'shanghai.html' },
-      { name: 'Guilin', lat: 25.2736, lng: 110.2900, tag: 'Where China Inspires', desc: 'Float through mist-shrouded karst landscapes that have inspired poets for centuries.', page: 'guilin.html' }
-    ];
+    /* ---- Canvas overlay for flying lines ---- */
+    var canvas = document.getElementById('flyline-canvas');
+    var ctx = canvas.getContext('2d');
 
+    function resizeCanvas() {
+      var rect = document.getElementById('chinamap').getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+    }
+    resizeCanvas();
+    map.on('resize', resizeCanvas);
+
+    /* ---- Compute arc control point (for curved lines) ---- */
+    function getArcMidpoint(p1, p2, height) {
+      var midLat = (p1.lat + p2.lat) / 2;
+      var midLng = (p1.lng + p2.lng) / 2;
+      var dx = p1.lng - p2.lng;
+      var dy = p1.lat - p2.lat;
+      var dist = Math.sqrt(dx*dx + dy*dy);
+      var offset = height * (1 + dist * 0.08);
+      return L.latLng(midLat + offset * 0.3, midLng - offset * 0.15);
+    }
+
+    /* ---- Flying lines state ---- */
+    var flyDots = [];
+    var animFrameId = null;
+    var routePairs = [];
+    for (var i = 0; i < cities.length - 1; i++) {
+      routePairs.push({ from: cities[i], to: cities[i+1] });
+    }
+
+    /* ---- Init flying dots ---- */
+    function initFlyDots() {
+      flyDots = [];
+      routePairs.forEach(function(pair, idx) {
+        var from = L.latLng(pair.from.lat, pair.from.lng);
+        var to = L.latLng(pair.to.lat, pair.to.lng);
+        var ctrl = getArcMidpoint(from, to, 1.5);
+        flyDots.push({
+          from: from, to: to, ctrl: ctrl,
+          progress: idx * 0.25, // stagger
+          speed: 0.002 + Math.random() * 0.001,
+          color: idx % 2 === 0 ? '#D4AF37' : '#F8F6F1'
+        });
+      });
+    }
+    initFlyDots();
+
+    /* ---- Quadratic bezier ---- */
+    function bezierPoint(p0, p1, p2, t) {
+      var mt = 1 - t;
+      var lat = mt*mt * p0.lat + 2*mt*t * p1.lat + t*t * p2.lat;
+      var lng = mt*mt * p0.lng + 2*mt*t * p1.lng + t*t * p2.lng;
+      return L.latLng(lat, lng);
+    }
+
+    /* ---- Draw flying lines & dots on canvas ---- */
+    function drawFlyLines() {
+      if (!canvas) return;
+      var w = canvas.width, h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      // Draw arc lines
+      flyDots.forEach(function(dot) {
+        var steps = 50;
+        ctx.beginPath();
+        ctx.moveTo(
+          map.latLngToContainerPoint(dot.from).x,
+          map.latLngToContainerPoint(dot.from).y
+        );
+        for (var i = 1; i <= steps; i++) {
+          var t = i / steps;
+          var pt = bezierPoint(dot.from, dot.ctrl, dot.to, t);
+          var px = map.latLngToContainerPoint(pt);
+          if (px) ctx.lineTo(px.x, px.y);
+        }
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.15)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Glow behind line
+        ctx.shadowColor = 'rgba(212, 175, 55, 0.1)';
+        ctx.shadowBlur = 12;
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.06)';
+        ctx.lineWidth = 6;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Moving dot
+        var pt2 = bezierPoint(dot.from, dot.ctrl, dot.to, dot.progress);
+        var px2 = map.latLngToContainerPoint(pt2);
+        if (px2) {
+          // Outer glow
+          var grad = ctx.createRadialGradient(px2.x, px2.y, 0, px2.x, px2.y, 14);
+          grad.addColorStop(0, 'rgba(212, 175, 55, 0.6)');
+          grad.addColorStop(0.5, 'rgba(212, 175, 55, 0.15)');
+          grad.addColorStop(1, 'rgba(212, 175, 55, 0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(px2.x, px2.y, 14, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Core dot
+          ctx.fillStyle = '#D4AF37';
+          ctx.beginPath();
+          ctx.arc(px2.x, px2.y, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+
+      // Animate
+      flyDots.forEach(function(dot) {
+        dot.progress += dot.speed;
+        if (dot.progress > 1) dot.progress = 0;
+      });
+
+      animFrameId = requestAnimationFrame(drawFlyLines);
+    }
+
+    /* ---- Markers ---- */
     var markerIcon = L.divIcon({
       className: 'marker-gold',
       html: '<div class="marker-outer"><div class="marker-inner"></div></div>',
-      iconSize: [40, 40],
-      iconAnchor: [20, 20]
+      iconSize: [44, 44],
+      iconAnchor: [22, 22]
     });
 
     var markers = [];
     cities.forEach(function(c) {
       var marker = L.marker([c.lat, c.lng], { icon: markerIcon }).addTo(map);
-      
-      var popupContent = '<div class="map-popup"><span class="map-popup-label">' + c.name + '</span><span class="map-popup-tag">' + c.tag + '</span><p class="map-popup-desc">' + c.desc + '</p><a href="' + c.page + '" class="map-popup-link">Explore →</a></div>';
+
+      var popupContent = '<div class="map-popup"><span class="map-popup-label">' + c.name + '</span><span class="map-popup-tag">' + c.tag + '</span><p class="map-popup-desc">' + c.desc + '</p><div style="font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:0.6rem;">' + c.days + '</div><a href="' + c.page + '" class="map-popup-link">Explore →</a></div>';
       marker.bindPopup(popupContent, {
         className: 'map-popup-custom',
         closeButton: false,
-        offset: [0, -20]
+        offset: [0, -22]
       });
-      
+
       markers.push(marker);
     });
 
-    var routeCoords = [
-      [39.9042, 116.4074],
-      [34.3416, 108.9398],
-      [31.2304, 121.4737],
-      [25.2736, 110.2900]
-    ];
+    /* ---- Route polylines (subtle dashed + glow) ---- */
+    var routeCoords = cities.map(function(c) { return [c.lat, c.lng]; });
 
-    var routeLine = L.polyline(routeCoords, {
+    // Glow line (thick, transparent)
+    L.polyline(routeCoords, {
       color: '#D4AF37',
-      weight: 2.5,
-      opacity: 0.7,
-      dashArray: '12, 10'
+      weight: 6,
+      opacity: 0.08
     }).addTo(map);
 
-    var routeBounds = routeLine.getBounds().pad(0.5);
+    // Main dashed line
+    L.polyline(routeCoords, {
+      color: '#D4AF37',
+      weight: 2,
+      opacity: 0.5,
+      dashArray: '8, 8'
+    }).addTo(map);
+
+    var routeBounds = L.latLngBounds(routeCoords).pad(0.3);
     map.fitBounds(routeBounds);
 
-    // City cards hover sync
-    document.querySelectorAll('.city-card').forEach(function(card) {
+    /* ---- Start flying line animation ---- */
+    drawFlyLines();
+
+    /* ---- Redraw flying lines on map move ---- */
+    map.on('moveend', function() {
+      // animation loop already handles redraw, but force immediate
+    });
+
+    /* ---- Card interactions ---- */
+    var cityCards = document.querySelectorAll('.city-card');
+
+    function panToCity(idx) {
+      if (idx < 0 || idx >= cities.length) return;
+      var c = cities[idx];
+      map.flyTo([c.lat, c.lng], 6.5, { duration: 1.2 });
+
+      // Highlight card
+      cityCards.forEach(function(card) { card.classList.remove('active'); });
+      if (cityCards[idx]) cityCards[idx].classList.add('active');
+
+      // Open popup
+      if (markers[idx]) markers[idx].openPopup();
+    }
+
+    // Click card → fly to city
+    cityCards.forEach(function(card, idx) {
+      card.addEventListener('click', function(e) {
+        e.preventDefault();
+        panToCity(idx);
+        // Still navigate on second click? Let's navigate after a delay
+        setTimeout(function() {
+          window.location.href = cities[idx].page;
+        }, 2000);
+      });
+    });
+
+    // Hover card → highlight marker
+    cityCards.forEach(function(card, idx) {
       card.addEventListener('mouseenter', function() {
-        var idx = Array.from(card.parentNode.children).indexOf(card);
-        if (markers[idx]) {
-          markers[idx].openPopup();
-        }
+        if (markers[idx]) markers[idx].openPopup();
       });
       card.addEventListener('mouseleave', function() {
         markers.forEach(function(m) { m.closePopup(); });
       });
     });
+
+    /* ---- Tour button ---- */
+    var tourBtn = document.getElementById('tour-btn');
+    var tourActive = false;
+    var tourIdx = 0;
+    var tourTimer = null;
+
+    function startTour() {
+      if (tourActive) return;
+      tourActive = true;
+      tourBtn.textContent = '■ Stop';
+      tourBtn.classList.add('active');
+      tourIdx = 0;
+
+      function nextCity() {
+        if (!tourActive || tourIdx >= cities.length) {
+          stopTour();
+          return;
+        }
+        panToCity(tourIdx);
+        tourIdx++;
+        tourTimer = setTimeout(nextCity, 3000);
+      }
+      nextCity();
+    }
+
+    function stopTour() {
+      tourActive = false;
+      tourBtn.textContent = '▶ Tour';
+      tourBtn.classList.remove('active');
+      if (tourTimer) { clearTimeout(tourTimer); tourTimer = null; }
+    }
+
+    tourBtn.addEventListener('click', function() {
+      if (tourActive) stopTour();
+      else startTour();
+    });
+
+    /* ---- Reset button ---- */
+    document.getElementById('reset-btn').addEventListener('click', function() {
+      stopTour();
+      cityCards.forEach(function(card) { card.classList.remove('active'); });
+      markers.forEach(function(m) { m.closePopup(); });
+      map.flyToBounds(routeBounds, { duration: 1 });
+    });
+
+    /* ---- Stop animation on page leave ---- */
+    window.addEventListener('beforeunload', function() {
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+    });
+
   });
   </script>
-  <script src="js/script.js"></script>
+  <script src="js/script.js?v=2"></script>
 </body>
 </html>
