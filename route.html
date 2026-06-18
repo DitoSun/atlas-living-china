@@ -593,54 +593,51 @@ document.addEventListener('DOMContentLoaded', function() {
   L.polyline(coords, { color: '#D4AF37', weight: 6, opacity: 0.06 }).addTo(map);
   map.fitBounds(L.latLngBounds(coords).pad(0.3));
 
-  // Airplane icon (HTML plane emoji in a divIcon)
+  // Airplane icon
   var planeIcon = L.divIcon({
     className: '',
-    html: '<div style="font-size:22px;line-height:1;transform:rotate(-45deg);text-shadow:0 0 10px rgba(212,175,55,0.5);">✈</div>',
-    iconSize: [22, 22],
-    iconAnchor: [11, 11]
+    html: '<div style="font-size:36px;line-height:1;text-shadow:0 0 15px rgba(212,175,55,0.6);">✈</div>',
+    iconSize: [36, 36],
+    iconAnchor: [18, 18]
   });
 
-  // Animate plane along route
   var plane = L.marker(coords[0], { icon: planeIcon }).addTo(map);
-  var planeProgress = 0;
-  var planeSpeed = 0.002;
-  var totalDist = 0;
   var segDists = [];
-  // Calculate segment distances
+  var totalDist = 0;
   for (var i = 0; i < coords.length - 1; i++) {
     var d = map.distance(L.latLng(coords[i]), L.latLng(coords[i+1]));
     segDists.push(d);
     totalDist += d;
   }
 
-  function updatePlane() {
-    var remaining = planeProgress;
-    for (var i = 0; i < segDists.length; i++) {
-      if (remaining <= segDists[i]) {
-        var frac = remaining / segDists[i];
-        var from = coords[i], to = coords[i+1];
-        var lat = from[0] + (to[0] - from[0]) * frac;
-        var lng = from[1] + (to[1] - from[1]) * frac;
+  // Move plane along route over `duration` ms, then call callback
+  function flyPlane(fromIdx, toIdx, duration, callback) {
+    var startTime = performance.now();
+    var from = L.latLng(coords[fromIdx]);
+    var to = L.latLng(coords[toIdx]);
+    var angle = Math.atan2(coords[toIdx][1] - coords[fromIdx][1], coords[toIdx][0] - coords[fromIdx][0]) * 180 / Math.PI;
 
-        // Calculate rotation angle
-        var angle = Math.atan2(to[1] - from[1], to[0] - from[0]) * 180 / Math.PI;
-        var el = plane.getElement();
-        if (el) {
-          var iconDiv = el.querySelector('div');
-          if (iconDiv) iconDiv.style.transform = 'rotate(' + (angle - 45) + 'deg)';
-        }
+    function step(now) {
+      var t = Math.min((now - startTime) / duration, 1);
+      var lat = from.lat + (to.lat - from.lat) * t;
+      var lng = from.lng + (to.lng - from.lng) * t;
+      plane.setLatLng([lat, lng]);
 
-        plane.setLatLng([lat, lng]);
-        break;
+      // Rotate plane toward destination
+      var el = plane.getElement();
+      if (el) {
+        var iconDiv = el.querySelector('div');
+        if (iconDiv) iconDiv.style.transform = 'rotate(' + (angle - 45) + 'deg)';
       }
-      remaining -= segDists[i];
+
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else if (callback) {
+        callback();
+      }
     }
-    planeProgress += planeSpeed * totalDist;
-    if (planeProgress > totalDist) planeProgress = 0;
-    requestAnimationFrame(updatePlane);
+    requestAnimationFrame(step);
   }
-  updatePlane();
 
   // City cards
   var cc = document.querySelectorAll('.city-card');
@@ -664,20 +661,33 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Tour
+  // Tour — click button to fly plane between cities
   var touring=false, tIdx=0, tTimer=null, tBtn=document.getElementById('tour-btn');
   function startTour(){
-    if(touring)return; touring=true; tBtn.textContent='Stop'; tBtn.classList.add('active'); tIdx=0;
-    function next(){
-      if(!touring||tIdx>=cities.length){stopTour();return;}
+    if(touring) return;
+    touring=true; tBtn.textContent='Stop'; tBtn.classList.add('active');
+    plane.setLatLng(coords[0]);
+    markers[0].openPopup();
+    cc.forEach(function(c){ c.classList.remove('active'); });
+    if(cc[0]) cc[0].classList.add('active');
+    tIdx = 1;
+    tTimer = setTimeout(function nextCity(){
+      if(!touring || tIdx >= cities.length){ stopTour(); return; }
       cc.forEach(function(c){ c.classList.remove('active'); });
       if(cc[tIdx]) cc[tIdx].classList.add('active');
       markers[tIdx].openPopup();
       map.flyTo([cities[tIdx].lat, cities[tIdx].lng], 6, { duration: 1.2 });
-      tIdx++; tTimer=setTimeout(next, 3000);
-    } next();
+      flyPlane(tIdx - 1, tIdx, 5000, function(){
+        if(touring) tTimer = setTimeout(nextCity, 500);
+      });
+      tIdx++;
+    }, 1500);
   }
-  function stopTour(){ touring=false; tBtn.textContent='Tour'; tBtn.classList.remove('active'); if(tTimer){clearTimeout(tTimer);tTimer=null;} markers.forEach(function(m){m.closePopup();}); }
+  function stopTour(){
+    touring=false; tBtn.textContent='Tour'; tBtn.classList.remove('active');
+    if(tTimer){clearTimeout(tTimer);tTimer=null;}
+    markers.forEach(function(m){m.closePopup();});
+  }
   tBtn.addEventListener('click', function(){ if(touring) stopTour(); else startTour(); });
   document.getElementById('reset-btn').addEventListener('click', function(){
     stopTour(); cc.forEach(function(c){ c.classList.remove('active'); });
