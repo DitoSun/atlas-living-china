@@ -602,6 +602,73 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   var plane = L.marker(coords[0], { icon: planeIcon }).addTo(map);
+
+  // Contrail canvas overlay
+  var trailCanvas = L.control({position:'bottomleft'});
+  trailCanvas.onAdd = function(map) {
+    var c = document.createElement('canvas');
+    c.id = 'trail-canvas';
+    c.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:999;pointer-events:none;';
+    map.getContainer().appendChild(c);
+    return c;
+  };
+  trailCanvas.addTo(map);
+
+  function resizeTrailCanvas() {
+    var c = document.getElementById('trail-canvas');
+    if (!c) return;
+    var rect = c.parentElement.getBoundingClientRect();
+    c.width = rect.width;
+    c.height = rect.height;
+  }
+  resizeTrailCanvas();
+  map.on('resize', resizeTrailCanvas);
+
+  var trailPoints = [];
+  var trailAnimId = null;
+
+  function drawTrail() {
+    var c = document.getElementById('trail-canvas');
+    if (!c) return;
+    var ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    if (trailPoints.length > 1) {
+      for (var i = 1; i < trailPoints.length; i++) {
+        var alpha = (i / trailPoints.length) * 0.5;
+        var width = (i / trailPoints.length) * 4;
+        ctx.beginPath();
+        ctx.moveTo(trailPoints[i-1].x, trailPoints[i-1].y);
+        ctx.lineTo(trailPoints[i].x, trailPoints[i].y);
+        ctx.strokeStyle = 'rgba(212, 175, 55, ' + alpha + ')';
+        ctx.lineWidth = width;
+        ctx.stroke();
+      }
+      // Outer glow
+      ctx.shadowColor = 'rgba(212, 175, 55, 0.3)';
+      ctx.shadowBlur = 8;
+      for (var i = 1; i < trailPoints.length; i++) {
+        var alpha = (i / trailPoints.length) * 0.2;
+        ctx.beginPath();
+        ctx.moveTo(trailPoints[i-1].x, trailPoints[i-1].y);
+        ctx.lineTo(trailPoints[i].x, trailPoints[i].y);
+        ctx.strokeStyle = 'rgba(212, 175, 55, ' + alpha + ')';
+        ctx.lineWidth = 6;
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+    }
+
+    trailAnimId = requestAnimationFrame(drawTrail);
+  }
+  drawTrail();
+
+  function addTrailPoint(lat, lng) {
+    var point = map.latLngToContainerPoint(L.latLng(lat, lng));
+    trailPoints.push({ x: point.x, y: point.y });
+    if (trailPoints.length > 30) trailPoints.shift();
+  }
+
   var segDists = [];
   var totalDist = 0;
   for (var i = 0; i < coords.length - 1; i++) {
@@ -623,6 +690,11 @@ document.addEventListener('DOMContentLoaded', function() {
       var lng = from.lng + (to.lng - from.lng) * t;
       plane.setLatLng([lat, lng]);
 
+      // Add trail point every few frames
+      if (Math.floor(t * 100) % 3 === 0) {
+        addTrailPoint(lat, lng);
+      }
+
       // Rotate plane toward destination
       var el = plane.getElement();
       if (el) {
@@ -637,6 +709,15 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     requestAnimationFrame(step);
+  }
+
+  function clearTrail() {
+    trailPoints = [];
+    var c = document.getElementById('trail-canvas');
+    if (c) {
+      var ctx = c.getContext('2d');
+      ctx.clearRect(0, 0, c.width, c.height);
+    }
   }
 
   // City cards
@@ -692,6 +773,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('reset-btn').addEventListener('click', function(){
     stopTour(); cc.forEach(function(c){ c.classList.remove('active'); });
     markers.forEach(function(m){ m.closePopup(); });
+    plane.setLatLng(coords[0]);
+    clearTrail();
     map.flyToBounds(L.latLngBounds(coords).pad(0.3), { duration: 1 });
   });
 });
