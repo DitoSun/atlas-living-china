@@ -324,11 +324,16 @@
     @media (max-width: 900px) {
       .city-explorer { grid-template-columns: repeat(2, 1fr); max-width: 100%; }
       .map-wrapper { height: 380px; }
+      .route-map-section { padding: 4rem 1.5rem; }
     }
     @media (max-width: 600px) {
-      .city-explorer { grid-template-columns: 1fr; max-width: 100%; }
+      .city-explorer { grid-template-columns: 1fr; max-width: 100%; gap: 0.8rem; }
       .map-wrapper { height: 280px; }
       .map-controls { display: none; }
+      .route-map-section { padding: 3rem 1rem; }
+      .route-overview a { padding: 1.2rem 0.8rem; }
+      .route-overview h3 { font-size: 1.1rem; }
+      .full-image { height: 40vh; min-height: 250px; }
     }
   </style>
   
