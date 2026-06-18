@@ -564,9 +564,9 @@ document.addEventListener('DOMContentLoaded', function() {
   darkStyle.textContent = '.leaflet-tile-pane img.leaflet-tile{filter:invert(1) hue-rotate(180deg) saturate(0.4) brightness(0.75) !important}.leaflet-container{background:#0D1A30 !important}';
   document.head.appendChild(darkStyle);
 
-  // Popup style - inject into page
+  // Popup style - inject into page (remove white borders)
   var popStyle = document.createElement('style');
-  popStyle.textContent = '.popup-box{background:#14213D;border:1px solid rgba(212,175,55,0.25);border-radius:6px;padding:1rem 1.2rem;min-width:180px;max-width:220px;box-shadow:0 8px 30px rgba(0,0,0,0.4);font-family:Montserrat,sans-serif}.popup-box .pb-title{font-family:"Playfair Display",serif;font-size:1rem;color:#D4AF37;margin-bottom:2px}.popup-box .pb-tag{font-size:0.65rem;color:#D9C7B0;font-style:italic;margin-bottom:4px}.popup-box .pb-days{font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px}.popup-box .pb-desc{font-size:0.72rem;color:rgba(248,246,241,0.8);line-height:1.5;margin-bottom:8px}.popup-box .pb-link{display:inline-block;font-size:0.6rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#D4AF37;border-bottom:1px solid #D4AF37;padding-bottom:2px;text-decoration:none;transition:color 0.3s}.popup-box .pb-link:hover{color:#F8F6F1;border-color:#F8F6F1}';
+  popStyle.textContent = '.leaflet-popup-content-wrapper{background:#14213D !important;color:#F8F6F1 !important;border-radius:6px !important;box-shadow:0 8px 30px rgba(0,0,0,0.5) !important;border:1px solid rgba(212,175,55,0.2) !important}.leaflet-popup-tip{background:#14213D !important;border:1px solid rgba(212,175,55,0.2) !important}.leaflet-popup-close-button{color:#D9C7B0 !important;font-size:1.2rem !important;top:6px !important;right:6px !important}.leaflet-popup-content{margin:0 !important;padding:0 !important}.leaflet-popup-content-wrapper .leaflet-popup-content{margin:0 !important;padding:0 !important}.popup-box{padding:1rem 1.2rem;min-width:180px;max-width:230px;font-family:Montserrat,sans-serif}.popup-box .pb-title{font-family:"Playfair Display",serif;font-size:1rem;color:#D4AF37;margin-bottom:2px}.popup-box .pb-tag{font-size:0.65rem;color:#D9C7B0;font-style:italic;margin-bottom:4px}.popup-box .pb-days{font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px}.popup-box .pb-desc{font-size:0.72rem;color:rgba(248,246,241,0.8);line-height:1.5;margin-bottom:8px}.popup-box .pb-link{display:inline-block;font-size:0.6rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#D4AF37;border-bottom:1px solid #D4AF37;padding-bottom:2px;text-decoration:none;transition:color 0.3s}.popup-box .pb-link:hover{color:#F8F6F1;border-color:#F8F6F1}';
   document.head.appendChild(popStyle);
 
   // City markers
@@ -589,9 +589,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Route line
   var coords = cities.map(function(c){ return [c.lat, c.lng]; });
-  L.polyline(coords, { color: '#D4AF37', weight: 2, opacity: 0.4, dashArray: '6, 8' }).addTo(map);
+  var routeLine = L.polyline(coords, { color: '#D4AF37', weight: 2, opacity: 0.4, dashArray: '6, 8' }).addTo(map);
   L.polyline(coords, { color: '#D4AF37', weight: 6, opacity: 0.06 }).addTo(map);
   map.fitBounds(L.latLngBounds(coords).pad(0.3));
+
+  // Airplane icon (HTML plane emoji in a divIcon)
+  var planeIcon = L.divIcon({
+    className: '',
+    html: '<div style="font-size:22px;line-height:1;transform:rotate(-45deg);text-shadow:0 0 10px rgba(212,175,55,0.5);">✈</div>',
+    iconSize: [22, 22],
+    iconAnchor: [11, 11]
+  });
+
+  // Animate plane along route
+  var plane = L.marker(coords[0], { icon: planeIcon }).addTo(map);
+  var planeProgress = 0;
+  var planeSpeed = 0.002;
+  var totalDist = 0;
+  var segDists = [];
+  // Calculate segment distances
+  for (var i = 0; i < coords.length - 1; i++) {
+    var d = map.distance(L.latLng(coords[i]), L.latLng(coords[i+1]));
+    segDists.push(d);
+    totalDist += d;
+  }
+
+  function updatePlane() {
+    var remaining = planeProgress;
+    for (var i = 0; i < segDists.length; i++) {
+      if (remaining <= segDists[i]) {
+        var frac = remaining / segDists[i];
+        var from = coords[i], to = coords[i+1];
+        var lat = from[0] + (to[0] - from[0]) * frac;
+        var lng = from[1] + (to[1] - from[1]) * frac;
+
+        // Calculate rotation angle
+        var angle = Math.atan2(to[1] - from[1], to[0] - from[0]) * 180 / Math.PI;
+        var el = plane.getElement();
+        if (el) {
+          var iconDiv = el.querySelector('div');
+          if (iconDiv) iconDiv.style.transform = 'rotate(' + (angle - 45) + 'deg)';
+        }
+
+        plane.setLatLng([lat, lng]);
+        break;
+      }
+      remaining -= segDists[i];
+    }
+    planeProgress += planeSpeed * totalDist;
+    if (planeProgress > totalDist) planeProgress = 0;
+    requestAnimationFrame(updatePlane);
+  }
+  updatePlane();
 
   // City cards
   var cc = document.querySelectorAll('.city-card');
