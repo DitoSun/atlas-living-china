@@ -566,13 +566,25 @@
       wheelPxPerZoomLevel: 120    // more scroll needed to zoom
     });
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 10,
       minZoom: 4,
       updateWhenZooming: false,
       updateWhenIdle: true,
       keepBuffer: 4
     }).addTo(map);
+
+    // Darken OSM tiles to match site theme (invert + adjust hues)
+    // Using a MutationObserver to apply filter after tiles load
+    var tilePanes = document.querySelectorAll('.leaflet-tile-pane, .leaflet-overlay-pane');
+    var styleEl = document.createElement('style');
+    styleEl.textContent = `
+      .leaflet-tile-pane img.leaflet-tile {
+        filter: invert(1) hue-rotate(180deg) saturate(0.6) brightness(0.85) !important;
+        mix-blend-mode: normal !important;
+      }
+    `;
+    document.head.appendChild(styleEl);
 
     /* ---- Canvas overlay for flying lines ---- */
     var canvas = document.getElementById('flyline-canvas');
