@@ -703,7 +703,8 @@ document.addEventListener('DOMContentLoaded', function() {
   var touring=false, tIdx=0, tTimer=null, tBtn=document.getElementById('tour-btn');
   function startTour(){
     if(touring) return;
-    touring=true; tBtn.textContent='Stop'; tBtn.classList.add('active');
+    touring=true; flyingCanceled = false;
+    tBtn.textContent='Stop'; tBtn.classList.add('active');
     plane.setLatLng(coords[0]);
     markers[0].openPopup();
     cc.forEach(function(c){ c.classList.remove('active'); });
