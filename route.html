@@ -602,122 +602,79 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   var plane = L.marker(coords[0], { icon: planeIcon }).addTo(map);
+  var flyingCanceled = false;
 
-  // Contrail canvas overlay
-  var trailCanvas = L.control({position:'bottomleft'});
-  trailCanvas.onAdd = function(map) {
-    var c = document.createElement('canvas');
-    c.id = 'trail-canvas';
-    c.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:999;pointer-events:none;';
-    map.getContainer().appendChild(c);
-    return c;
-  };
-  trailCanvas.addTo(map);
+  // Contrail canvas — add directly to map container
+  var trailC = document.createElement('canvas');
+  trailC.id = 'trail-canvas';
+  trailC.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:9999;pointer-events:none;';
+  document.getElementById('chinamap').appendChild(trailC);
 
-  function resizeTrailCanvas() {
-    var c = document.getElementById('trail-canvas');
-    if (!c) return;
-    var rect = c.parentElement.getBoundingClientRect();
-    c.width = rect.width;
-    c.height = rect.height;
+  function resizeTrail() {
+    var rect = document.getElementById('chinamap').getBoundingClientRect();
+    trailC.width = rect.width;
+    trailC.height = rect.height;
   }
-  resizeTrailCanvas();
-  map.on('resize', resizeTrailCanvas);
+  resizeTrail();
+  map.on('resize', resizeTrail);
 
-  var trailPoints = [];
-  var trailAnimId = null;
+  var trailPts = [];
 
   function drawTrail() {
-    var c = document.getElementById('trail-canvas');
-    if (!c) return;
-    var ctx = c.getContext('2d');
-    ctx.clearRect(0, 0, c.width, c.height);
-
-    if (trailPoints.length > 1) {
-      for (var i = 1; i < trailPoints.length; i++) {
-        var alpha = (i / trailPoints.length) * 0.5;
-        var width = (i / trailPoints.length) * 4;
-        ctx.beginPath();
-        ctx.moveTo(trailPoints[i-1].x, trailPoints[i-1].y);
-        ctx.lineTo(trailPoints[i].x, trailPoints[i].y);
-        ctx.strokeStyle = 'rgba(212, 175, 55, ' + alpha + ')';
-        ctx.lineWidth = width;
-        ctx.stroke();
+    var ctx = trailC.getContext('2d');
+    ctx.clearRect(0, 0, trailC.width, trailC.height);
+    if (trailPts.length > 1) {
+      for (var i = 1; i < trailPts.length; i++) {
+        var a = (i / trailPts.length) * 0.5;
+        ctx.beginPath(); ctx.moveTo(trailPts[i-1].x, trailPts[i-1].y); ctx.lineTo(trailPts[i].x, trailPts[i].y);
+        ctx.strokeStyle = 'rgba(212,175,55,' + a + ')'; ctx.lineWidth = (i / trailPts.length) * 4; ctx.stroke();
       }
-      // Outer glow
-      ctx.shadowColor = 'rgba(212, 175, 55, 0.3)';
-      ctx.shadowBlur = 8;
-      for (var i = 1; i < trailPoints.length; i++) {
-        var alpha = (i / trailPoints.length) * 0.2;
-        ctx.beginPath();
-        ctx.moveTo(trailPoints[i-1].x, trailPoints[i-1].y);
-        ctx.lineTo(trailPoints[i].x, trailPoints[i].y);
-        ctx.strokeStyle = 'rgba(212, 175, 55, ' + alpha + ')';
-        ctx.lineWidth = 6;
-        ctx.stroke();
+      ctx.shadowColor = 'rgba(212,175,55,0.3)'; ctx.shadowBlur = 8;
+      for (var i = 1; i < trailPts.length; i++) {
+        var a = (i / trailPts.length) * 0.2;
+        ctx.beginPath(); ctx.moveTo(trailPts[i-1].x, trailPts[i-1].y); ctx.lineTo(trailPts[i].x, trailPts[i].y);
+        ctx.strokeStyle = 'rgba(212,175,55,' + a + ')'; ctx.lineWidth = 6; ctx.stroke();
       }
       ctx.shadowBlur = 0;
     }
-
-    trailAnimId = requestAnimationFrame(drawTrail);
+    requestAnimationFrame(drawTrail);
   }
   drawTrail();
 
-  function addTrailPoint(lat, lng) {
-    var point = map.latLngToContainerPoint(L.latLng(lat, lng));
-    trailPoints.push({ x: point.x, y: point.y });
-    if (trailPoints.length > 30) trailPoints.shift();
+  function addPt(lat, lng) {
+    var p = map.latLngToContainerPoint(L.latLng(lat, lng));
+    trailPts.push({x: p.x, y: p.y});
+    if (trailPts.length > 30) trailPts.shift();
   }
 
-  var segDists = [];
-  var totalDist = 0;
-  for (var i = 0; i < coords.length - 1; i++) {
-    var d = map.distance(L.latLng(coords[i]), L.latLng(coords[i+1]));
-    segDists.push(d);
-    totalDist += d;
+  function clearTrail() {
+    trailPts = [];
+    var ctx = trailC.getContext('2d');
+    ctx.clearRect(0, 0, trailC.width, trailC.height);
   }
 
+  var flyAnimId = null;
   // Move plane along route over `duration` ms, then call callback
   function flyPlane(fromIdx, toIdx, duration, callback) {
+    flyingCanceled = false;
     var startTime = performance.now();
     var from = L.latLng(coords[fromIdx]);
     var to = L.latLng(coords[toIdx]);
     var angle = Math.atan2(coords[toIdx][1] - coords[fromIdx][1], coords[toIdx][0] - coords[fromIdx][0]) * 180 / Math.PI;
 
     function step(now) {
+      if (flyingCanceled) { if (callback) callback(); return; }
       var t = Math.min((now - startTime) / duration, 1);
       var lat = from.lat + (to.lat - from.lat) * t;
       var lng = from.lng + (to.lng - from.lng) * t;
       plane.setLatLng([lat, lng]);
-
-      // Add trail point every few frames
-      if (Math.floor(t * 100) % 3 === 0) {
-        addTrailPoint(lat, lng);
-      }
-
-      // Rotate plane toward destination
+      if (Math.floor(t * 100) % 3 === 0) addPt(lat, lng);
       var el = plane.getElement();
-      if (el) {
-        var iconDiv = el.querySelector('div');
-        if (iconDiv) iconDiv.style.transform = 'rotate(' + (angle - 45) + 'deg)';
-      }
-
-      if (t < 1) {
-        requestAnimationFrame(step);
-      } else if (callback) {
-        callback();
-      }
+      if (el) { var d = el.querySelector('div'); if (d) d.style.transform = 'rotate(' + (angle - 45) + 'deg)'; }
+      if (t < 1) { flyAnimId = requestAnimationFrame(step); }
+      else if (callback) { callback(); }
     }
-    requestAnimationFrame(step);
-  }
-
-  function clearTrail() {
-    trailPoints = [];
-    var c = document.getElementById('trail-canvas');
-    if (c) {
-      var ctx = c.getContext('2d');
-      ctx.clearRect(0, 0, c.width, c.height);
-    }
+    flyAnimId = requestAnimationFrame(step);
   }
 
   // City cards
@@ -765,7 +722,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1500);
   }
   function stopTour(){
-    touring=false; tBtn.textContent='Tour'; tBtn.classList.remove('active');
+    touring=false; flyingCanceled = true;
+    if(flyAnimId){ cancelAnimationFrame(flyAnimId); flyAnimId = null; }
+    tBtn.textContent='Tour'; tBtn.classList.remove('active');
     if(tTimer){clearTimeout(tTimer);tTimer=null;}
     markers.forEach(function(m){m.closePopup();});
   }
